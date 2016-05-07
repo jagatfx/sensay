@@ -22,7 +22,7 @@
   });
   socket.on('tone', function(data) {
     console.log('tone received');
-    $('#messages').append($('<li>').text(JSON.stringify(data.request)));
+    $('#messages').append($('<li>').text(JSON.stringify(data.text)));
     $('#messages').append($('<li>').text(JSON.stringify(data.result)));
   });
 </script>
