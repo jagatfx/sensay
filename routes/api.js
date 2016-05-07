@@ -1,6 +1,7 @@
 var express = require('express');
 var router  = express.Router();
 var watson  = require('watson-developer-cloud');
+var Tone    = require('../models/tone');
 
 var WATSON_URL   = process.env.WATSON_URL;
 var WATSON_USER  = process.env.WATSON_USER;
@@ -14,17 +15,43 @@ var toneAnalyzer = watson.tone_analyzer({
   version: 'v3-beta'
 });
 
-router.get('/test', function(req, res, next) {
-  return res.json({result: "OK"});
-});
-
-router.post('/tone', function(req, res, next) {
-  toneAnalyzer.tone(req.body, function(err, data) {
-    if (err)
-      return next(err);
-    else
-      return res.json(data);
+var theRouter = function(io) {
+  router.get('/test', function(req, res, next) {
+    return res.json({result: "OK"});
   });
-});
 
-module.exports = router;
+  router.post('/tone', function(req, res, next) {
+    toneAnalyzer.tone(req.body, function(err, data) {
+      if (err) {
+        return next(err);
+      }
+      else {
+        var ret = {
+          text: req.body.text,
+          result: data
+        };
+        if (io.sockets) {
+          io.sockets.emit('tone', ret);
+        } else {
+          console.error('could not emit tone');
+        }
+        new Tone({
+          text: req.body.text,
+          result: data
+        }).save( function( err, tone, count ) {
+          if (err) {
+            console.error(err);
+            return res.json( {result: err} );
+          } else {
+            console.log('saved tone to db');
+          }
+        });
+        return res.json(ret);
+      }
+    });
+  });
+
+  return router;
+};
+
+module.exports = theRouter;
