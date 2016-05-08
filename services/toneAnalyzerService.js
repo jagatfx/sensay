@@ -22,7 +22,7 @@ var toneAnalyzerService = function(io, userContext, text, callback) {
     toneAnalyzer.tone({ text: text}, function(err, data) {
 
       var sentiment = evaluateSentiment(data);
-      var agreeable = evaluateAgreeable(data);
+      var agreeable = evaluateAgreeable(data, sentiment);
 
       if (err) {
         console.error(err);
@@ -94,20 +94,20 @@ function evaluateSentiment(toneData) {
     return toneName;
 }
 
-function evaluateAgreeable(toneData) {
+function evaluateAgreeable(toneData, sentiment) {
 
     //Find the social_tone section in the json response
     var socialTone = toneData.document_tone.tone_categories.find(function(tone_category){ return tone_category.category_id === 'social_tone'; });
 
     var agreeableTone = socialTone.tones.find(function(tone){ return tone.tone_id === 'agreeableness_big5'; });
-
+    var conscientiousnessTone = socialTone.tones.find(function(tone){ return tone.tone_id === 'conscientiousness_big5'; });
 
 
     var languageTone = toneData.document_tone.tone_categories.find(function(tone_category){ return tone_category.category_id === 'language_tone'; });
     var analyticalTone = languageTone.tones.find(function(tone){ return tone.tone_id === 'analytical'; });
 
 
-    if(agreeableTone.score > .8 || analyticalTone.score > .87)
+    if((agreeableTone.score > .8 || conscientiousnessTone.score > .85 || analyticalTone.score > .87) && sentiment !== 'Anger' && sentiment !== 'Disgust')
       return true;
 
     return false;
