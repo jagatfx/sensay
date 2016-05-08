@@ -98,11 +98,11 @@ var theRouter = function(io) {
     return res.json({result: 'OK'});
   });
 
-  router.get('/empty', function(req, res, next) {
+  router.get('/clear', function(req, res, next) {
     Tone.remove({}, function(err) {
       if (err) {
         console.error(err);
-        return res.json( {result: 'Error: in /empty'} );
+        return res.json( {result: 'Error: in /clear'} );
       }
       return res.json({result: 'OK'});
     });

@@ -37,6 +37,12 @@ npm install
 nf start
 ```
 
+## Clear Local Database
+```
+https://localhost:3000/api/clear
+```
+
+
 ## Deployment
 
 Deploys automatically on heroku from the latest on master branch.
