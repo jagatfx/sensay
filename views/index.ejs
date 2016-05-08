@@ -13,22 +13,20 @@
 
 <div class="container-fluid" id="main-container">
   <div class="container col-sm-9" id="convo-container">
-    <div class="container col-sm-12">
+    <div class="container col-sm-12" id="convo-title">
       <header class="section-header">
-        <h3 class="section-title">Current Conversation</h4>
+        <h2 class="section-title">Current Conversation</h2>
       </header>
     </div>
     <div class="container col-sm-12">
-      <div class="container col-sm-3"><p>Sentiment</p></div>
-      <div class="container col-sm-9"><p>Transcript</p></div>
     </div>
     <ul class="container col-sm-12" id="current-convo">
 
     </ul>
-    <form action="">
-      <div class="container col-sm-12">
+    <form>
+      <div class="container col-sm-12" id="replyBox">
         <div class="container col-sm-10">
-          <input id="supportComment" type="text" />
+          <textarea autofocus rows="4" id="supportComment" placeholder="Enter Message Here..."></textarea>
         </div>
         <div class="container col-sm-2">
           <button id="submitComment">Send</button>
