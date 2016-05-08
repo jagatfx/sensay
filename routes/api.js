@@ -3,6 +3,7 @@ var router  = express.Router();
 var Tone    = require('../models/tone');
 var toneAnalyzerService = require('../services/toneAnalyzerService');
 var personalityAnalyzerService = require('../services/personalityAnalyzerService');
+var twilioService = require('../services/twilioService');
 
 var theRouter = function(io) {
 
@@ -52,6 +53,49 @@ var theRouter = function(io) {
       }
     });
 
+  });
+
+  router.get('/sms', function(req, res, next) {
+    twilioService.sendSms(null, 'This is a test of the broadcast system....beeeeeep.');
+    return res.json({result: 'OK'});
+  });
+
+  var TWILIO_CUSTOMER_NUMBER = process.env.TWILIO_CUSTOMER_NUMBER;
+  router.post('/sms', function(req, res, next) {
+    var to = TWILIO_CUSTOMER_NUMBER;
+    twilioService.sendSms(to, req.body.text);
+    return res.json({result: 'OK'});
+  });
+
+  router.post('/smsreply', function(req, res, next) {
+    console.log('SMS reply received:'+JSON.stringify(req.body));
+    var userContext = {
+        userName: req.body.From ? req.body.From : 'twilio',
+        channel: 'twilio',
+        userType: 'consumer'
+    };
+    toneAnalyzerService(io, userContext, req.body.Body, function(err, data){
+      if(err) {
+        console.error(err);
+        return res.json( {result: 'Error: sms error calling toneAnalyzerService()'} );
+      }
+      else {
+        return res.json({result: 'OK'});
+      }
+    });
+  });
+
+  var TWILIO_MANAGER_NUMBER = process.env.TWILIO_MANAGER_NUMBER;
+  router.post('/sms-manager', function(req, res, next) {
+    var to = TWILIO_MANAGER_NUMBER;
+    twilioService.sendSms(to, req.body.text);
+    return res.json({result: 'OK'});
+  });
+
+  router.post('/sms-appease', function(req, res, next) {
+    var to = TWILIO_CUSTOMER_NUMBER;
+    twilioService.sendSms(to, req.body.text);
+    return res.json({result: 'OK'});
   });
 
   router.get('/clear', function(req, res, next) {
