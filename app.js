@@ -58,7 +58,9 @@ module.exports = function(app, io) {
       message: err.message,
       error: {}
     });
-  });
+    });
+
+
 
   return app;
 

@@ -1,11 +1,15 @@
 var express = require('express');
 var router  = express.Router();
-var watson  = require('watson-developer-cloud');
 var Tone    = require('../models/tone');
-
+var toneAnalyzerService = require('../services/toneAnalyzerService');
+/*
+var watson  = require('watson-developer-cloud');
 var WATSON_URL   = process.env.WATSON_URL;
 var WATSON_USER  = process.env.WATSON_USER;
 var WATSON_PASS  = process.env.WATSON_PASS;
+
+
+
 
 var toneAnalyzer = watson.tone_analyzer({
   url: WATSON_URL,
@@ -14,8 +18,10 @@ var toneAnalyzer = watson.tone_analyzer({
   version_date: '2016-11-02',
   version: 'v3-beta'
 });
-
+*/
 var theRouter = function(io) {
+
+
   router.get('/test', function(req, res, next) {
     return res.json({result: "OK"});
   });
@@ -35,6 +41,18 @@ var theRouter = function(io) {
   });
 
   router.post('/tone', function(req, res, next) {
+    toneAnalyzerService(io, req.body.text, function(err, data){
+      if(err) {
+        console.error(err);
+
+        return next(err);
+      }
+      else {
+        res.json(data);
+      }
+    });
+
+/*
     toneAnalyzer.tone(req.body, function(err, data) {
       if (err) {
         return next(err);
@@ -63,6 +81,7 @@ var theRouter = function(io) {
         return res.json(ret);
       }
     });
+*/
   });
 
   return router;
