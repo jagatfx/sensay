@@ -1,10 +1,92 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  padding: 100px;
+  font-family: 'Source Sans Pro', sans-serif !important;
+  background-image: url("/imgs/weather.png");
+  background-repeat: repeat;
 }
 
 a {
   color: #00B7FF;
+}
+
+.center-title {
+	text-align: center;
+}
+
+#sensay-logo {
+	margin-top: 4px;
+}
+.section-title {
+
+font-size: 20px;
+color: #3fb34f;
+
+}
+#convo-container {
+	border-style: solid;
+	border-color: #888888;
+	border-width: 5px;
+	min-height: 500px;
+	background-color: #FFFFFF;
+
+}
+
+#help-btn {
+	background-color: #3fb34f;
+	text-align: center;
+	min-height: 60px;
+	margin-bottom: 10px;
+	font-family: 'Source Sans Pro', sans-serif;
+	color: #ffffff;
+	font-size: 10px;
+}
+
+#help-btn p {
+	padding-top: 20px;
+	font-size: 1.5em;
+}
+
+#overall-mood {
+	background-color: #FFFFFF;
+	opacity: 70%;
+	font-weight: 300;
+}
+
+#overall-mood-img {
+	min-height: 100px;
+	margin-bottom: 10px;
+	text-align: center;
+	font-size: 2em;
+}
+
+#overall-mood-img p {
+	margin: 30px;
+}
+
+#appease-btn {
+	margin-bottom: 10px;
+	background-color: white;
+	border-style: solid;
+	border-color: #3fb43f;
+	color: #3fb43f;
+	
+} 
+
+#appease-btn p {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+#sponsors {
+	margin-top: 10px;
+	background-color: #FFFFFF;
+	opacity: 70%;
+	height: 200px;
+	font-weight: 300;
+}
+
+#sponsors img {
+	max-height: 200px;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
