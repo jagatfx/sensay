@@ -167,6 +167,12 @@
 
         $('#sentimentResults').html('');
 
+        //Fallback to neutral if nothing exists (means old data coming from db or cache, or just bad data missing sentiment)
+        if(!data.sentiment)
+          data.sentiment = "neutral";
+        else
+          data.sentiment = data.sentiment.toLowerCase();
+
         var sentimentResultItems = _.template($('#messageVerifyResultTemplate').html())( { agreeable: data.agreeable, sentiment: data.sentiment });
 
         $('#sentimentResults').html(sentimentResultItems);
