@@ -13,6 +13,8 @@ You need to create a .env file with (fill in blanks):
 WATSON_URL=
 WATSON_USER=
 WATSON_PASS=
+WATSON_USER_PERSONALITY=
+WATSON_PASS_PERSONALITY=
 PORT=3000
 NODE_ENV=development
 MONGODB_URI=mongodb://localhost/sensay
