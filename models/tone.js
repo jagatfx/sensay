@@ -7,7 +7,8 @@ var Tone = new Schema({
   userName: String,
   userType: String,
   channel: String,
-  sentiment: String
+  sentiment: String,
+  agreeable: Boolean
 }, {
   timestamps: true
 });

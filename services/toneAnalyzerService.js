@@ -15,11 +15,14 @@ var toneAnalyzer = watson.tone_analyzer({
   version: 'v3-beta'
 });
 
+const NEUTRAL_TONE = "neutral";
+
 var toneAnalyzerService = function(io, userContext, text, callback) {
 
     toneAnalyzer.tone({ text: text}, function(err, data) {
 
       var sentiment = evaluateSentiment(data);
+      var agreeable = evaluateAgreeable(data);
 
       if (err) {
         console.error(err);
@@ -31,7 +34,8 @@ var toneAnalyzerService = function(io, userContext, text, callback) {
         userType: userContext.userType,
         channel: userContext.channel,
         result: data,
-        sentiment: sentiment
+        sentiment: sentiment,
+        agreeable: agreeable
       };
       if (io.sockets) {
         io.sockets.emit('tone', ret);
@@ -45,7 +49,8 @@ var toneAnalyzerService = function(io, userContext, text, callback) {
         userType: userContext.userType,
         channel: userContext.channel,
         result: data,
-        sentiment: sentiment
+        sentiment: sentiment,
+        agreeable: agreeable
       }).save( function( err, tone, count ) {
         if (err) {
           console.error(err);
@@ -69,6 +74,11 @@ function evaluateSentiment(toneData) {
     //Find the max emotion tone score
     var maxScore = Math.max.apply(Math,emotionTone.tones.map(function(tone){return tone.score;}));
 
+    //Threshold of score of .45, otherwise we treat it as neutral
+    if(maxScore < .4) {
+      return NEUTRAL_TONE;
+    }
+
     //Using the max score, find the tone object with that score
     var toneWithHighestScore = emotionTone.tones.find(function(tone){ return tone.score == maxScore; });
 
@@ -78,6 +88,25 @@ function evaluateSentiment(toneData) {
     toneName = toneWithHighestScore.tone_name;
 
     return toneName;
+}
+
+function evaluateAgreeable(toneData) {
+
+    //Find the social_tone section in the json response
+    var socialTone = toneData.document_tone.tone_categories.find(function(tone_category){ return tone_category.category_id === 'social_tone'; });
+
+    var agreeableTone = socialTone.tones.find(function(tone){ return tone.tone_id === 'agreeableness_big5'; });
+
+
+
+    var languageTone = toneData.document_tone.tone_categories.find(function(tone_category){ return tone_category.category_id === 'language_tone'; });
+    var analyticalTone = languageTone.tones.find(function(tone){ return tone.tone_id === 'analytical'; });
+
+
+    if(agreeableTone.score > .8 || analyticalTone.score > .87)
+      return true;
+
+    return false;
 }
 
 module.exports = toneAnalyzerService;
