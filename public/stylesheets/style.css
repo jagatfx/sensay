@@ -31,6 +31,33 @@ color: #3fb34f;
 
 }
 
+#convo-title {
+	border-bottom: solid #888888;
+}
+
+#convo-title header {
+	padding-bottom: 10px;
+}
+
+#current-convo {
+	margin-top: 15px;
+	min-height: 600px;
+}
+
+#supportComment {
+	width: 100%;
+}
+
+#submitComment {
+	padding: 25px;
+	background-color: #3fb34f;
+	border: none;
+}
+
+#replyBox {
+	margin-bottom: 15px;
+}
+
 #help-btn {
 	background-color: #3fb34f;
 	text-align: center;
@@ -43,6 +70,7 @@ color: #3fb34f;
 
 #help-btn p {
 	padding-top: 20px;
+	width: 100%;
 	font-size: 1.5em;
 }
 
