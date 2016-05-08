@@ -17,12 +17,17 @@ var toneAnalyzer = watson.tone_analyzer({
 
 const NEUTRAL_TONE = "Neutral";
 
-var toneAnalyzerService = function(io, userContext, text, callback) {
+var toneAnalyzerService = function(io, userContext, text, callback, verifyOnly) {
+
+
+    //Default verifyOnly to false if not passed in
+    verifyOnly = (typeof verifyOnly === "undefined" ? false : verifyOnly);
+
 
     toneAnalyzer.tone({ text: text}, function(err, data) {
 
       var sentiment = evaluateSentiment(data);
-      var agreeable = evaluateAgreeable(data);
+      var agreeable = evaluateAgreeable(data, sentiment);
       updateConversationMood(userContext, data, function(err, conversationMood) {
         if (conversationMood) {
           io.sockets.emit('conversation-mood', conversationMood);
@@ -42,27 +47,34 @@ var toneAnalyzerService = function(io, userContext, text, callback) {
         sentiment: sentiment,
         agreeable: agreeable
       };
-      if (io.sockets) {
-        io.sockets.emit('tone', ret);
-      } else {
-        console.error('could not emit tone');
-      }
 
-      new Tone({
-        text: text,
-        userName: userContext.userName,
-        userType: userContext.userType,
-        channel: userContext.channel,
-        result: data,
-        sentiment: sentiment,
-        agreeable: agreeable
-      }).save( function( err, tone, count ) {
-        if (err) {
-          console.error(err);
-          return callback(err, null);
+      //Only communicate out and store in DB if we are not in verification only mode
+      if(!verifyOnly) {
+
+        if (io.sockets) {
+          io.sockets.emit('tone', ret);
+        } else {
+          console.error('could not emit tone');
         }
-        console.log('saved tone to db');
-      });
+
+        new Tone({
+          text: text,
+          userName: userContext.userName,
+          userType: userContext.userType,
+          channel: userContext.channel,
+          result: data,
+          sentiment: sentiment,
+          agreeable: agreeable
+        }).save( function( err, tone, count ) {
+          if (err) {
+            console.error(err);
+            return callback(err, null);
+            //return res.json( {result: err} );
+          } else {
+            console.log('saved tone to db');
+          }
+        });
+      }
 
       return callback(null, ret);
     });
@@ -97,20 +109,20 @@ function evaluateSentiment(toneData) {
     return toneName;
 }
 
-function evaluateAgreeable(toneData) {
+function evaluateAgreeable(toneData, sentiment) {
 
     //Find the social_tone section in the json response
     var socialTone = toneData.document_tone.tone_categories.find(function(tone_category){ return tone_category.category_id === 'social_tone'; });
 
     var agreeableTone = socialTone.tones.find(function(tone){ return tone.tone_id === 'agreeableness_big5'; });
-
+    var conscientiousnessTone = socialTone.tones.find(function(tone){ return tone.tone_id === 'conscientiousness_big5'; });
 
 
     var languageTone = toneData.document_tone.tone_categories.find(function(tone_category){ return tone_category.category_id === 'language_tone'; });
     var analyticalTone = languageTone.tones.find(function(tone){ return tone.tone_id === 'analytical'; });
 
 
-    if(agreeableTone.score > .8 || analyticalTone.score > .87)
+    if((agreeableTone.score > .8 || conscientiousnessTone.score > .85 || analyticalTone.score > .87) && sentiment !== 'Anger' && sentiment !== 'Disgust')
       return true;
 
     return false;

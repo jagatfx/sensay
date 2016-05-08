@@ -1,11 +1,13 @@
 <% layout( 'layout' ) -%>
 
+<h1>Consumer Test Page</h1>
+
 <div class="consumer">
-  <label for="userName">Username</label>
-  <input id="userName" autocomplete="off" />
   <ul id="messages"></ul> -->
   <form action="">
-    <input id="m" autocomplete="off" /><button>Send</button>
+    <label for="userName">Username</label>
+    <input id="userName" autocomplete="off" autofocus required/><br />
+    <input id="m" class="message" autocomplete="off" placeholder="Enter Message Here" /><button>Send</button>
   </form>
 
 </div>

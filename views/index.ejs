@@ -24,15 +24,29 @@
 
     </ul>
     <form>
-      <div class="container col-sm-12" id="replyBox">
+      <div id="replyBox">
         <div class="container col-sm-10">
-          <textarea autofocus rows="4" id="supportComment" placeholder="Enter Message Here..."></textarea>
+          <input type="text" autofocus rows="4" id="supportComment" class="form-control" placeholder="Enter Message Here..."></input>
         </div>
         <div class="container col-sm-2">
-          <button id="submitComment">Send</button>
+          <button id="submitComment" class="btn btn-primary">Send</button>
         </div>
       </div>
     </form>
+    <div id="verifyCommentContent" class="row col-sm-12">
+      <div class="col-sm-1">
+        <button id="verifyComment" class="btn btn-info">Verify Sentiment</button>
+      </div>
+      <div class="col-sm-9">
+        <ul id="sentimentResults" class="list-inline">
+        </ul>
+      </div>
+    </div>
+    <div class="row col-sm-12">
+    <br />
+    <br />
+    </div>
+
   </div>
   <div class="container col-sm-3">
     <div class="container col-sm-12" id="help-btn">
@@ -55,7 +69,34 @@
     </div>
 
     <div class="container col-sm-12" id="sponsors">
-      <img src="/imgs/poweredby.png">
+      <div class="container col-sm-12" id="sponsor-sensay">
+        <img src="/imgs/sensayLogo.png" height="35px">
+      </div>
+      <div class="container col-sm-12 text-center" id="powered-by">
+        <p>is powered by:</p>  
+      </div>
+      <div class="row">
+        <div class="col-sm-6" id="ibm-sponsor">
+          <img src="/imgs/ibm_watson.png" height="70px">
+        </div>
+        <div class="col-sm-6" id="other-sponsors">
+          <div class="" id="amazon-sponsor">
+            <img src="/imgs/echo.png" height="16px">
+          </div>
+          <div class="" id="domain-sponsor">
+            <img src="/imgs/domain-logo.png" height="16px">
+          </div>
+          <div class="" id="twilio-sponsor">
+            <img src="/imgs/twilio.png" height="16px">
+          </div>
+        </div>
+      </div>
+      <div class="container col-sm-12" id="created-by">
+        <p>Created by:</p>
+      </div>
+      <div class="container col-sm-12" id="authors">
+        <p>Jacob Madden, Kevin Mulder, Chris Lee, Michelle Lee</p>
+      </div>
     </div>
   </div>
 </div>
@@ -76,6 +117,8 @@
   $('form').submit(function() {
     let supportComment = $('#supportComment').val();
 
+    $('#sentimentResults').html('');
+
     socket.emit('supportResponse', {
 
       userContext: {
@@ -88,6 +131,34 @@
     });
     $('#supportComment').val('');
     return false;
+
+  });
+
+  $('#supportComment').keydown(function() {
+    $('#sentimentResults').html('');
+  });
+
+  $('#verifyComment').click(function() {
+    let supportComment = $('#supportComment').val();
+    $.ajax({
+      type: "POST",
+      url: "/api/toneValidate",
+      data: JSON.stringify({ text: supportComment }),
+      success: function(data) {
+        console.log(data);
+
+        $('#sentimentResults').html('');
+
+        var sentimentResultItems = _.template($('#messageVerifyResultTemplate').html())( { agreeable: data.agreeable, sentiment: data.sentiment });
+
+        $('#sentimentResults').html(sentimentResultItems);
+
+
+      },
+      dataType: "json",
+      contentType: "application/json"
+    });
+
 
   });
 
@@ -142,7 +213,7 @@
 <script type="text/template" id="requestMessageTemplate">
     <div class="container col-sm-12 request">
      <div class="container col-sm-3">
-       <img src="/imgs/{{sentiment}}.png" height="40px">
+       <img src="/imgs/{{sentiment}}.png" height="30px">
      </div>
      <div class="container col-sm-6">
        <p>
@@ -170,4 +241,15 @@
       {% }  %}
      </div>
     </div>
+</script>
+
+<script type="text/template" id="messageVerifyResultTemplate">
+    <li>
+       <img src="/imgs/{{sentiment}}.png" height="30px">
+    </li>   
+    {% if (agreeable) { %}
+        <li>
+          <img src="/imgs/check.png" height="30px" width="30px" style='display'>
+        </li>
+    {% }  %}
 </script>
