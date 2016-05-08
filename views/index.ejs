@@ -192,6 +192,7 @@
   });
 
   $('#appeaseCustomer').click(function() {
+    $('#overall-mood-img div').replaceWith('<div><img src="/imgs/neutral.png" height="85px"></div>');
     $.ajax({
       type: "POST",
       url: "/api/sms-appease",
