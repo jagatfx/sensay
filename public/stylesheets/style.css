@@ -15,6 +15,7 @@ a {
 
 #sensay-logo {
 	margin-top: 4px;
+	padding-left: 5px;
 }
 .section-title {
 	font-size: 20px;
@@ -143,31 +144,44 @@ body { font: 13px Helvetica, Arial; }
 	font-size: 1.5em;
 }
 
-/* Deal with dashboard message styling */
-.request .message {
-	background-color: #edd9da;
-	border-radius: 10px;
-	padding: 8px;
-	padding-left: 15px;
-}
-
-.support .message {
-	background-color: #aeddfb;
-	border-radius: 10px;
-	padding: 8px;
-	padding-left: 15px;
-	margin-left: -30px;
-}
-
-.message-item {
-	padding: 6px;
-}
-
-
 #verifyCommentContent {
 	padding-top: 2px;
 }
 
 #legendContent {
 	padding-top: 5px;
+}
+
+/* Deal with dashboard message styling */
+.message {
+	padding: 8px;
+	font-size: 18px;
+}
+
+.message-item {
+	/*padding: 6px;*/
+}
+
+
+
+.request .message-content {
+	background-color: #edd9da;
+	border-radius: 10px;
+	padding: 8px;
+	padding-left: 15px;
+}
+
+.request img {
+	margin-top: 8px;
+}
+
+.support .message-content {
+	background-color: #aeddfb;
+	border-radius: 10px;
+	padding: 8px;
+	padding-left: 15px;
+}
+
+.message-content {
+	display:inline-block;
 }
