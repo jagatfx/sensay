@@ -3,25 +3,28 @@ var extend = _.extend;
 var watson = require('watson-developer-cloud');
 
 // TODO: move out credentials
-var WATSON_URL   = process.env.WATSON_URL;
-var WATSON_USER  = process.env.WATSON_USER;
-var WATSON_PASS  = process.env.WATSON_PASS;
+var WATSON_USER_PERSONALITY  = process.env.WATSON_USER_PERSONALITY;
+var WATSON_PASS_PERSONALITY  = process.env.WATSON_PASS_PERSONALITY;
 
 var personalityInsights = watson.personality_insights({
-  url: WATSON_URL,
-  username: WATSON_USER,
-  password: WATSON_PASS,
-  version_date: '2016-11-02',
-  version: 'v3-beta'
+  username: WATSON_USER_PERSONALITY,
+  password: WATSON_PASS_PERSONALITY,
+  "version": "v2",
+  "headers": {
+    "X-Watson-Learning-Opt-Out": 1
+  }
 })
 
-function getPersonalityProfile(paramters, callback) {
-  personalityInsights.profile(sanitize(parameters), callback);
+function getPersonalityProfile(io, data, callback) {
+  personalityInsights.profile({
+    text: sanitize(data),
+    language: 'en'
+  }, callback);
 }
 
-function sanitize(parameters) {
-  return extend(parameters, {
-    text: parameters.text ? parameters.text.replace(/[\s]+/g, ' ') : undefined
+function sanitize(data) {
+  return extend(data, {
+    text: data.text ? data.text.replace(/[\s]+/g, ' ') : undefined
   });
 };
 

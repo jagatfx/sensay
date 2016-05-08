@@ -2,28 +2,22 @@ var express = require('express');
 var router  = express.Router();
 var Tone    = require('../models/tone');
 var toneAnalyzerService = require('../services/toneAnalyzerService');
-/*
-var watson  = require('watson-developer-cloud');
-var WATSON_URL   = process.env.WATSON_URL;
-var WATSON_USER  = process.env.WATSON_USER;
-var WATSON_PASS  = process.env.WATSON_PASS;
+var personalityAnalyzerService = require('../services/personalityAnalyzerService');
 
-
-
-
-var toneAnalyzer = watson.tone_analyzer({
-  url: WATSON_URL,
-  username: WATSON_USER,
-  password: WATSON_PASS,
-  version_date: '2016-11-02',
-  version: 'v3-beta'
-});
-*/
 var theRouter = function(io) {
-
 
   router.get('/test', function(req, res, next) {
     return res.json({result: "OK"});
+  });
+
+  router.post('/personality', function(req, res, next) {
+    personalityAnalyzerService.getPersonalityProfile(io, req.body, function(err, data) {
+      if (err) {
+        console.error(err);
+        return res.json({result: 'Error: posting /personality'});
+      }
+      return res.json(data);
+    });
   });
 
   router.get('/tone', function(req, res, next) {
@@ -34,7 +28,7 @@ var theRouter = function(io) {
     .exec(function(err, tones) {
       if (err) {
         console.error(err);
-        return res.json( {result: 'Error: getting tones'} );
+        return res.json( {result: 'Error: getting /tone'} );
       }
       return res.json(tones);
     });
@@ -44,44 +38,13 @@ var theRouter = function(io) {
     toneAnalyzerService(io, req.body.text, function(err, data){
       if(err) {
         console.error(err);
-
-        return next(err);
+        return res.json( {result: 'Error: posting /tone'} );
       }
       else {
-        res.json(data);
+        return res.json(data);
       }
     });
 
-/*
-    toneAnalyzer.tone(req.body, function(err, data) {
-      if (err) {
-        return next(err);
-      }
-      else {
-        var ret = {
-          text: req.body.text,
-          result: data
-        };
-        if (io.sockets) {
-          io.sockets.emit('tone', ret);
-        } else {
-          console.error('could not emit tone');
-        }
-        new Tone({
-          text: req.body.text,
-          result: data
-        }).save( function( err, tone, count ) {
-          if (err) {
-            console.error(err);
-            return res.json( {result: err} );
-          } else {
-            console.log('saved tone to db');
-          }
-        });
-        return res.json(ret);
-      }
-    });
-*/
   });
 
   return router;
