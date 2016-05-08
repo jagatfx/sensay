@@ -138,7 +138,7 @@ function getSentiment(intentRequest, callback) {
         var replyMessage = null;
         switch(toneName)
         {
-            case "Anger" : replyMessage = "<speak>Why so angry? <audio src='https://s3.amazonaws.com/arrowiapp/cantdo.mp3' /></speak>";break;
+            case "Anger" : replyMessage = "<speak>Why so angry? <audio src='https://s3.amazonaws.com/arrowiapp/cantdo-1.mp3' /></speak>";break;
             case "Fear"  : replyMessage = "<speak>No need to fear.</speak>";break;
             case "Disgust"  : replyMessage = "<speak>And you disgust me too.</speak>";break;
             case "Joy"  : replyMessage = "<speak>That's great!</speak>";break;

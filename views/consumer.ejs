@@ -1,0 +1,40 @@
+<% layout( 'layout' ) -%>
+
+<ul id="messages"></ul> -->
+<form action="">
+  <input id="m" autocomplete="off" /><button>Send</button>
+</form>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script>
+  var socket = io();
+  $('form').submit(function(){
+    let supportRequestMessage = $('#m').val();
+    socket.emit('supportRequest', supportRequestMessage);
+    $('#m').val('');
+    $('#messages').append($('<li>').text(`You say: ${supportRequestMessage}`));
+    return false;
+  });
+
+  socket.on('supportResponse', function(data) {
+    console.log('response received');
+    $('#messages').append($('<li>').text(JSON.stringify(data.text)));
+  });
+  
+
+  /*socket.on('tone', function(data) {
+    console.log('tone received');
+    $('#current-convo').append($('<li>').text(JSON.stringify(data.text)));
+    // $('#messages').append($('<li>').text(JSON.stringify(data.result)));
+  });
+  socket.on('tones', function(tones) {
+    console.log('tones received');
+    for(var i=0; i < tones.length; i++) {
+      var tone = tones[i];
+      $('#current-convo').append($('<li>').text(JSON.stringify(tone.text)));
+      // $('#messages').append($('<li>').text(JSON.stringify(tone.result)));
+    }
+  });*/
+</script>
