@@ -1,5 +1,7 @@
 <% layout( 'layout' ) -%>
 
+<label for="userName">Username</label>
+<input id="userName" autocomplete="off" />
 <ul id="messages"></ul> -->
 <form action="">
   <input id="m" autocomplete="off" /><button>Send</button>
@@ -12,7 +14,17 @@
   var socket = io();
   $('form').submit(function(){
     let supportRequestMessage = $('#m').val();
-    socket.emit('supportRequest', supportRequestMessage);
+
+    socket.emit('supportRequest', {
+
+      userContext: {
+        userName: $('#userName').val(),
+        channel: "web",
+        userType: "consumer"
+      },
+
+      text: supportRequestMessage
+    });
     $('#m').val('');
     $('#messages').append($('<li>').text(`You say: ${supportRequestMessage}`));
     return false;

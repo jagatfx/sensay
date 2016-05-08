@@ -7,38 +7,34 @@
 
 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-    </div>
-    <div class="navbar-collapse collapse">
-      <ul class="nav navbar-nav" id="main-menu">
-        <li><a href="#top">Current Conversation</a>
-        </li>
-        <li><a href="#page-help">Help Button</a>
-        </li>
-        <li><a href="#page-sentiment">Overall Sentiment</a>
-        </li>
-      </ul>
-    </div>
+    <img src="/imgs/sensayLogo.png" id="sensay-logo" height="40px">
   </div>
 </div>
-<div class="container col-sm-12" id="main-container">
-  <div class="container col-sm-8">
-    <div class="container">
+
+<div class="container-fluid" id="main-container">
+  <div class="container col-sm-9" id="convo-container">
+    <div class="container col-sm-12">
       <header class="section-header">
-        <h4 class="section-title">Current Conversation</h4>
+        <h3 class="section-title">Current Conversation</h4>
       </header>
     </div>
-    <ul class="container" id="current-convo">
+    <div class="container col-sm-12">
+      <div class="container col-sm-3"><p>Sentiment</p></div>
+      <div class="container col-sm-9"><p>Transcript</p></div>
+    </div>
+    <ul class="container col-sm-12" id="current-convo">
 
     </ul>
+    <div class="container col-sm-12">
+      <div class="container col-sm-10">
+        <textarea rows="3"></textarea>
+      </div>
+      <div class="container col-sm-2">
+        <input type="submit" value="Send">
+      </div>
+    </div>
   </div>
-  <div class="container col-sm-4">
+  <div class="container col-sm-3">
     <div class="container col-sm-12" id="help-btn">
       <p>
         TEXT MANAGER FOR HELP
@@ -46,13 +42,20 @@
     </div>
     <div class="container col-sm-12" id="overall-mood">
       <header class="section-header">
-        <h4 class="section-title">Overall Conversation Mood</h4>
+        <h4 class="section-title center-title">Conversation Mood</h4>
       </header>
+      <div class="container col-sm-12" id="overall-mood-img">
+        <p>N/A</p>
+      </div>
+      <div class="container col-sm-12 center-title" id="appease-btn">
+        <p>
+          APPEASE CUSTOMER
+        </p>
+      </div>
     </div>
-    <div class="container col-sm-12" id="graph">
-      <header class="section-header">
-        <h4 class="section-title">Graph</h4>
-      </header>
+
+    <div class="container col-sm-12" id="sponsors">
+      <img src="/imgs/poweredby.png">
     </div>
   </div>
 </div>
@@ -73,14 +76,14 @@
   // });
   socket.on('tone', function(data) {
     console.log('tone received');
-    $('#current-convo').append($('<li>').text(JSON.stringify(data.text)));
+    $('#current-convo').append($('<li>').text(data.userName + ":" + JSON.stringify(data.text) + "(" + data.channel + ")"));
     // $('#messages').append($('<li>').text(JSON.stringify(data.result)));
   });
   socket.on('tones', function(tones) {
     console.log('tones received');
     for(var i=0; i < tones.length; i++) {
       var tone = tones[i];
-      $('#current-convo').prepend($('<li>').text(JSON.stringify(tone.text)));
+      $('#current-convo').prepend($('<li>').text(tone.userName + ":" + JSON.stringify(tone.text)));
       // $('#messages').append($('<li>').text(JSON.stringify(tone.result)));
     }
   });

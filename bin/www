@@ -38,7 +38,10 @@ io.on('connection', function(socket) {
   });
 
   socket.on('supportRequest', function(data) {
-    toneAnalyzerService(io, data, function(err, data) {
+
+    console.log(data);
+
+    toneAnalyzerService(io, data.userContext, data.text, function(err, data) {
       if(err) {
         console.log(err)
       }
@@ -47,7 +50,11 @@ io.on('connection', function(socket) {
   });
 
   socket.on('supportResponse', function(data) {
-    toneAnalyzerService(io, data, function(err, data) {
+    
+    console.log(data);
+
+
+    toneAnalyzerService(io, data.userContext, data.text, function(err, data) {
       if(err) {
         console.log(err)
       }

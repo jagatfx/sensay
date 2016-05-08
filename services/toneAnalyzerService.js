@@ -15,35 +15,39 @@ var toneAnalyzer = watson.tone_analyzer({
   version: 'v3-beta'
 });
 
-var toneAnalyzerService = function(io, text, callback) {
+var toneAnalyzerService = function(io, userContext, text, callback) {
 
-      toneAnalyzer.tone({ text: text}, function(err, data) {
-
+    toneAnalyzer.tone({ text: text}, function(err, data) {
+      if (err) {
+        console.error(err);
+        return callback(err);
+      }
+      var ret = {
+        text: text,
+        userName: userContext.userName,
+        userType: userContext.userType,
+        channel: userContext.channel,
+        result: data
+      };
+      if (io.sockets) {
+        io.sockets.emit('tone', ret);
+      } else {
+        console.error('could not emit tone');
+      }
+      new Tone({
+        text: text,
+        userName: userContext.userName,
+        userType: userContext.userType,
+        channel: userContext.channel,
+        result: data
+      }).save( function( err, tone, count ) {
         if (err) {
           console.error(err);
           return callback(err);
         }
-        var ret = {
-          text: text,
-          result: data
-        };
-        if (io.sockets) {
-          io.sockets.emit('tone', ret);
-        } else {
-          console.error('could not emit tone');
-        }
-        new Tone({
-          text: text,
-          result: data
-        }).save( function( err, tone, count ) {
-          if (err) {
-            console.error(err);
-            return callback(err);
-          } else {
-            console.log('saved tone to db');
-          }
-        });
-        return callback(null, ret);
+        console.log('saved tone to db');
+      });
+      return callback(null, ret);
     });
 
 };
