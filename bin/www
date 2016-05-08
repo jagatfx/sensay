@@ -21,7 +21,7 @@ io.on('connection', function(socket) {
   console.log('a user connected');
   var tonesToRet = 10;
   Tone.find()
-  .sort({date: -1})
+  .sort({createdAt: -1})
   .limit(tonesToRet)
   .exec(function(err, tones) {
     if (err) {

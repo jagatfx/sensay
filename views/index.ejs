@@ -80,7 +80,7 @@
     console.log('tones received');
     for(var i=0; i < tones.length; i++) {
       var tone = tones[i];
-      $('#current-convo').append($('<li>').text(JSON.stringify(tone.text)));
+      $('#current-convo').prepend($('<li>').text(JSON.stringify(tone.text)));
       // $('#messages').append($('<li>').text(JSON.stringify(tone.result)));
     }
   });
