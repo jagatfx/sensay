@@ -20,7 +20,10 @@ app.set('port', port);
 io.on('connection', function(socket) {
   console.log('a user connected');
   var tonesToRet = 10;
-  Tone.find().limit(tonesToRet).exec(function(err, tones) {
+  Tone.find()
+  .sort({date: -1})
+  .limit(tonesToRet)
+  .exec(function(err, tones) {
     if (err) {
       console.error(err);
     }
