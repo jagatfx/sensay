@@ -106,15 +106,19 @@ function getSentiment(intentRequest, callback) {
       console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
       res.setEncoding('utf8');
       
-      var toneName = "Unknown";
+      var toneName = "neutral";
       
       res.on('data', (chunk) => {
         console.log(`BODY: ${chunk}`);
         
         
         var toneData = JSON.parse(chunk);
-        toneData = toneData.result;
+        //toneData = toneData.result;
 
+        toneName = toneData.sentiment;
+
+        toneName = toneName.toLowerCase();
+        /*
         //Find the emotion_tone section in the json response
         var emotionTone = toneData.document_tone.tone_categories.find(function(tone_category){ return tone_category.category_id === 'emotion_tone'; });
   
@@ -125,10 +129,12 @@ function getSentiment(intentRequest, callback) {
         var toneWithHighestScore = emotionTone.tones.find(function(tone){ return tone.score == maxScore; });
 
         console.log(toneWithHighestScore.tone_name);
+
+
         
         //Find out the tone name
         toneName = toneWithHighestScore.tone_name;
-        
+        */
         
       });
 
@@ -138,11 +144,12 @@ function getSentiment(intentRequest, callback) {
         var replyMessage = null;
         switch(toneName)
         {
-            case "Anger" : replyMessage = "<speak>Why so angry? <audio src='https://s3.amazonaws.com/arrowiapp/cantdo-1.mp3' /></speak>";break;
-            case "Fear"  : replyMessage = "<speak>No need to fear.</speak>";break;
-            case "Disgust"  : replyMessage = "<speak>And you disgust me too.</speak>";break;
-            case "Joy"  : replyMessage = "<speak>That's great!</speak>";break;
-            case "Sadness"  : replyMessage = "<speak>I'm sorry.</speak>";break;
+            case "anger" : replyMessage = "<speak>Why so angry? <audio src='https://s3.amazonaws.com/arrowiapp/cantdo-1.mp3' /></speak>";break;
+            case "fear"  : replyMessage = "<speak>No need to fear.</speak>";break;
+            case "disgust"  : replyMessage = "<speak>And you disgust me too.</speak>";break;
+            case "joy"  : replyMessage = "<speak>That's great!</speak>";break;
+            case "sadness"  : replyMessage = "<speak>I'm sorry.</speak>";break;
+            case "neutral"  : replyMessage = "<speak>OK</speak>";break;
         }
         
         //We made it to the end - send a success response and expect the tone name to hav eben set in the data event before this
@@ -159,7 +166,7 @@ function getSentiment(intentRequest, callback) {
       
       //Some problem with the API call - let the user know
       callback({},
-        buildSpeechletResponse("Fail", "Call Failed", "What's next", false));
+        buildSpeechletResponse("Fail", "<speak>Call Failed</speak>", "What's next", false));
     });
     
     // write data to request body

@@ -15,7 +15,7 @@ var toneAnalyzer = watson.tone_analyzer({
   version: 'v3-beta'
 });
 
-const NEUTRAL_TONE = "neutral";
+const NEUTRAL_TONE = "Neutral";
 
 var toneAnalyzerService = function(io, userContext, text, callback) {
 
@@ -74,8 +74,12 @@ function evaluateSentiment(toneData) {
     //Find the max emotion tone score
     var maxScore = Math.max.apply(Math,emotionTone.tones.map(function(tone){return tone.score;}));
 
-    //Threshold of score of .45, otherwise we treat it as neutral
-    if(maxScore < .4) {
+
+    var angerTone = emotionTone.tones.find(function(tone){ return tone.tone_id === 'anger'; });
+    var disgustTone = emotionTone.tones.find(function(tone){ return tone.tone_id === 'disgust'; });
+
+    //Threshold of score of .45, or BOTH anger and disgust have a slight value, otherwise we treat it as neutral
+    if(maxScore < .4 && !(angerTone.score > .3 && disgustTone.score > .22)) {
       return NEUTRAL_TONE;
     }
 
