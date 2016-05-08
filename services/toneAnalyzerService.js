@@ -30,57 +30,32 @@ var toneAnalyzerService = function(io, userContext, text, callback) {
         userName: userContext.userName,
         userType: userContext.userType,
         channel: userContext.channel,
-        result: data
+        result: data,
+        sentiment: sentiment
       };
       if (io.sockets) {
         io.sockets.emit('tone', ret);
       } else {
         console.error('could not emit tone');
       }
+
       new Tone({
         text: text,
         userName: userContext.userName,
         userType: userContext.userType,
         channel: userContext.channel,
-        result: data
+        result: data,
+        sentiment: sentiment
       }).save( function( err, tone, count ) {
         if (err) {
           console.error(err);
-          return callback(err);
-        }
-        var ret = {
-          text: text,
-          userName: userContext.userName,
-          userType: userContext.userType,
-          channel: userContext.channel,
-          result: data,
-          sentiment: sentiment
-        };
-        if (io.sockets) {
-          io.sockets.emit('tone', ret);
+          return callback(err, null);
+          //return res.json( {result: err} );
         } else {
-          console.error('could not emit tone');
+          console.log('saved tone to db');
         }
-        new Tone({
-          text: text,
-          userName: userContext.userName,
-          userType: userContext.userType,
-          channel: userContext.channel,
-          result: data,
-          sentiment: sentiment
-        }).save( function( err, tone, count ) {
-          if (err) {
-            console.error(err);
-            return callback(err, null);
-            //return res.json( {result: err} );
-          } else {
-            console.log('saved tone to db');
-          }
-        });
-        return callback(null, ret);
-          
-        console.log('saved tone to db');
       });
+
       return callback(null, ret);
     });
 
