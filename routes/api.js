@@ -55,6 +55,27 @@ var theRouter = function(io) {
 
   });
 
+
+  router.post('/toneValidate', function(req, res, next) {
+
+    var userContext = {
+        userName: 'Support',
+        channel: 'web',
+        userType: 'support'
+    };
+
+    var toneResult = toneAnalyzerService(io, userContext, req.body.text, function(err, data){
+      if(err) {
+        console.error(err);
+        return res.json( {result: 'Error: posting /tone'} );
+      }
+      else {
+        return res.json(data);
+      }
+    }, true);
+
+  });
+
   router.get('/sms', function(req, res, next) {
     twilioService.sendSms(null, 'This is a test of the broadcast system....beeeeeep.');
     return res.json({result: 'OK'});

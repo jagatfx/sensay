@@ -17,7 +17,12 @@ var toneAnalyzer = watson.tone_analyzer({
 
 const NEUTRAL_TONE = "Neutral";
 
-var toneAnalyzerService = function(io, userContext, text, callback) {
+var toneAnalyzerService = function(io, userContext, text, callback, verifyOnly) {
+
+
+    //Default verifyOnly to false if not passed in
+    verifyOnly = (typeof verifyOnly === "undefined" ? false : verifyOnly);
+
 
     toneAnalyzer.tone({ text: text}, function(err, data) {
 
@@ -37,29 +42,35 @@ var toneAnalyzerService = function(io, userContext, text, callback) {
         sentiment: sentiment,
         agreeable: agreeable
       };
-      if (io.sockets) {
-        io.sockets.emit('tone', ret);
-      } else {
-        console.error('could not emit tone');
-      }
 
-      new Tone({
-        text: text,
-        userName: userContext.userName,
-        userType: userContext.userType,
-        channel: userContext.channel,
-        result: data,
-        sentiment: sentiment,
-        agreeable: agreeable
-      }).save( function( err, tone, count ) {
-        if (err) {
-          console.error(err);
-          return callback(err, null);
-          //return res.json( {result: err} );
+
+      //Only communicate out and store in DB if we are not in verification only mode
+      if(!verifyOnly) {
+
+        if (io.sockets) {
+          io.sockets.emit('tone', ret);
         } else {
-          console.log('saved tone to db');
+          console.error('could not emit tone');
         }
-      });
+
+        new Tone({
+          text: text,
+          userName: userContext.userName,
+          userType: userContext.userType,
+          channel: userContext.channel,
+          result: data,
+          sentiment: sentiment,
+          agreeable: agreeable
+        }).save( function( err, tone, count ) {
+          if (err) {
+            console.error(err);
+            return callback(err, null);
+            //return res.json( {result: err} );
+          } else {
+            console.log('saved tone to db');
+          }
+        });
+      }
 
       return callback(null, ret);
     });

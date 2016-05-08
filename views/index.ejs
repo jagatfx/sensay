@@ -33,6 +33,15 @@
         </div>
       </div>
     </form>
+    <div class="row col-sm-12">
+      <div class="col-sm-1">
+        <button id="verifyComment">Verify Sentiment</button>
+      </div>
+      <div class="col-sm-9">
+        <ul id="sentimentResults" class="list-inline">
+        </ul>
+      </div>
+    </div>
   </div>
   <div class="container col-sm-3">
     <div class="container col-sm-12" id="help-btn">
@@ -76,6 +85,8 @@
   $('form').submit(function() {
     let supportComment = $('#supportComment').val();
 
+    $('#sentimentResults').html('');
+
     socket.emit('supportResponse', {
 
       userContext: {
@@ -88,6 +99,34 @@
     });
     $('#supportComment').val('');
     return false;
+
+  });
+
+  $('#supportComment').keydown(function() {
+    $('#sentimentResults').html('');
+  });
+
+  $('#verifyComment').click(function() {
+    let supportComment = $('#supportComment').val();
+    $.ajax({
+      type: "POST",
+      url: "/api/toneValidate",
+      data: JSON.stringify({ text: supportComment }),
+      success: function(data) {
+        console.log(data);
+
+        $('#sentimentResults').html('');
+
+        var sentimentResultItems = _.template($('#messageVerifyResultTemplate').html())( { agreeable: data.agreeable, sentiment: data.sentiment });
+
+        $('#sentimentResults').html(sentimentResultItems);
+
+
+      },
+      dataType: "json",
+      contentType: "application/json"
+    });
+
 
   });
 
@@ -142,7 +181,7 @@
 <script type="text/template" id="requestMessageTemplate">
     <div class="container col-sm-12 request">
      <div class="container col-sm-3">
-       <img src="/imgs/{{sentiment}}.png" height="40px">
+       <img src="/imgs/{{sentiment}}.png" height="30px">
      </div>
      <div class="container col-sm-6">
        <p>
@@ -170,4 +209,15 @@
       {% }  %}
      </div>
     </div>
+</script>
+
+<script type="text/template" id="messageVerifyResultTemplate">
+    <li class="list-group-item">
+       <img src="/imgs/{{sentiment}}.png" height="30px">
+    </li>   
+    {% if (agreeable) { %}
+        <li class="list-group-item">
+          <img src="/imgs/check.png" height="30px" width="30px" style='display'>
+        </li>
+    {% }  %}
 </script>
