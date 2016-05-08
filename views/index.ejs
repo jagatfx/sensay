@@ -71,6 +71,7 @@
   var socket = io();
 
   _.templateSettings = {
+      evaluate    : /\{%([\s\S]+?)%\}/g,
       interpolate : /\{\{(.+?)\}\}/g
   };
 
@@ -88,72 +89,87 @@
       text: supportComment
     });
     $('#supportComment').val('');
-    //$('#current-convo').append($('<li>').text(`You say: ${supportRequestMessage}`));
     return false;
 
   });
-  // $('form').submit(function(){
-  //   socket.emit('chat message', $('#m').val());
-  //   $('#m').val('');
-  //   return false;
-  // });
-  // socket.on('chat message', function(msg) {
-  //   console.log('chat received');
-  //   $('#messages').append($('<li>').text(msg));
-  // });
+
   socket.on('tone', function(data) {
     console.log('tone received');
 
-      //Fallback to neutral if nothing exists (means old data coming from db or cache, or just bad data missing sentiment)
-      if(!data.sentiment)
-        data.sentiment = "neutral";
-      else
-        data.sentiment = data.sentiment.toLowerCase();
+      item = buildMessageItem(data);
 
-      if(data.userName === "Support")
-        data.userName = "You say"
-
-    var item = _.template($('#messageTemplate').html())({ sentiment: data.sentiment, message: data.userName + ": " + JSON.stringify(data.text) + "(" + data.channel + ")"});
-
-
-  $('#current-convo').append(item);
-    // $('#current-convo').append($('<li>').text(data.userName + ":" + JSON.stringify(data.text) + "(" + data.channel + ")"));
-    //$('#current-convo').append($('<li>').text(data.userName + ":" + JSON.stringify(data.text) + "(" + data.channel + ")"));
-    // $('#messages').append($('<li>').text(JSON.stringify(data.result)));
+      $('#current-convo').append(item);
   });
 
   socket.on('tones', function(tones) {
     console.log('tones received');
     for(var i=0; i < tones.length; i++) {
-      var tone = tones[i];
 
-      //Fallback to neutral if nothing exists (means old data coming from db or cache)
+      var tone = tones[i];
+      var item = buildMessageItem(tone);
+
+      $('#current-convo').prepend(item);
+    }
+  });
+
+
+  function buildMessageItem(tone)
+  {
+      //Fallback to neutral if nothing exists (means old data coming from db or cache, or just bad data missing sentiment)
       if(!tone.sentiment)
         tone.sentiment = "neutral";
       else
         tone.sentiment = tone.sentiment.toLowerCase();
 
-      if(tone.userName === "Support")
+      if(tone.userName === "Support") {
         tone.userName = "You say";
 
-      var item = _.template($('#messageTemplate').html())({ sentiment: tone.sentiment, message: tone.userName + ": " + JSON.stringify(tone.text) + "(" + tone.channel + ")"});
-      $('#current-convo').prepend(item);
-      //$('#current-convo').prepend($('<li>').text(tone.userName + ":" + JSON.stringify(tone.text)));
-      // $('#messages').append($('<li>').text(JSON.stringify(tone.result)));
-    }
-  });
+        var agreeableCheck = false;
 
+        if(tone.agreeable)
+          agreeableCheck = true;
+
+        item = _.template($('#supportMessageTemplate').html())({ agreeable: agreeableCheck, message: tone.userName + ": " + JSON.stringify(tone.text) + "(" + tone.channel + ")"});
+
+      } 
+      else {
+        item = _.template($('#requestMessageTemplate').html())({ sentiment: tone.sentiment, message: tone.userName + ": " + JSON.stringify(tone.text) + "(" + tone.channel + ")"});
+
+      }
+
+      return item;
+  }
 </script>
 
-<script type="text/template" id="messageTemplate">
-    <div class="container col-sm-12">
+<script type="text/template" id="requestMessageTemplate">
+    <div class="container col-sm-12 request">
      <div class="container col-sm-3">
        <img src="/imgs/{{sentiment}}.png" height="40px">
      </div>
-     <div class="container col-sm-9">
+     <div class="container col-sm-6">
        <p>
          {{message}}
        </p>
+     </div>
+     <div class="container col-sm-3">
+     </div>
+    </div>
+</script>
+
+
+<script type="text/template" id="supportMessageTemplate">
+    <div class="container col-sm-12 support">
+     <div class="container col-sm-3">
+     </div>
+     <div class="container col-sm-6">
+       <p>
+         {{message}}
+       </p>
+     </div>
+     <div class="container col-sm-3">
+      {% if (agreeable) { %}
+        <img src="/imgs/check.png" height="30px" style='display'>
+      {% }  %}
      </div>
     </div>
 </script>
