@@ -75,7 +75,7 @@ function evaluateSentiment(toneData) {
     var maxScore = Math.max.apply(Math,emotionTone.tones.map(function(tone){return tone.score;}));
 
     //Threshold of score of .45, otherwise we treat it as neutral
-    if(maxScore < .43) {
+    if(maxScore < .4) {
       return NEUTRAL_TONE;
     }
 
