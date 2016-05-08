@@ -14,9 +14,10 @@ var toneAnalyzer = watson.tone_analyzer({
   version: 'v3-beta'
 });
 
-var toneAnalyzerService = function(io, text, callback) {
+var toneAnalyzerService = function(io, userContext, text, callback) {
 
       toneAnalyzer.tone({ text: text}, function(err, data) {
+
 
         if (err) {
           return callback(err);
@@ -25,6 +26,9 @@ var toneAnalyzerService = function(io, text, callback) {
         else {
           var ret = {
             text: text,
+            userName: userContext.userName,
+            userType: userContext.userType,
+            channel: userContext.channel,
             result: data
           };
           if (io.sockets) {
@@ -34,6 +38,9 @@ var toneAnalyzerService = function(io, text, callback) {
           }
           new Tone({
             text: text,
+            userName: userContext.userName,
+            userType: userContext.userType,
+            channel: userContext.channel,
             result: data
           }).save( function( err, tone, count ) {
             if (err) {

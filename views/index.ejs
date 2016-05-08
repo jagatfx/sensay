@@ -73,14 +73,14 @@
   // });
   socket.on('tone', function(data) {
     console.log('tone received');
-    $('#current-convo').append($('<li>').text(JSON.stringify(data.text)));
+    $('#current-convo').append($('<li>').text(data.userName + ":" + JSON.stringify(data.text) + "(" + data.channel + ")"));
     // $('#messages').append($('<li>').text(JSON.stringify(data.result)));
   });
   socket.on('tones', function(tones) {
     console.log('tones received');
     for(var i=0; i < tones.length; i++) {
       var tone = tones[i];
-      $('#current-convo').prepend($('<li>').text(JSON.stringify(tone.text)));
+      $('#current-convo').prepend($('<li>').text(tone.userName + ":" + JSON.stringify(tone.text)));
       // $('#messages').append($('<li>').text(JSON.stringify(tone.result)));
     }
   });

@@ -41,7 +41,14 @@ var theRouter = function(io) {
   });
 
   router.post('/tone', function(req, res, next) {
-    toneAnalyzerService(io, req.body.text, function(err, data){
+
+    var userContext = {
+        userName: 'Zaphod',
+        channel: 'echo',
+        userType: 'consumer'
+    };
+ 
+    toneAnalyzerService(io, userContext, req.body.text, function(err, data){
       if(err) {
         console.error(err);
 
