@@ -1,9 +1,5 @@
 <% layout( 'layout' ) -%>
 
-<!-- <ul id="messages"></ul> -->
-<!-- <form action="">
-  <input id="m" autocomplete="off" /><button>Send</button>
-</form> -->
 
 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -26,7 +22,7 @@
     <form>
       <div id="replyBox">
         <div class="container col-sm-10">
-          <input type="text" autofocus rows="4" id="supportComment" class="form-control" placeholder="Enter Message Here..."></input>
+          <input type="text" autofocus rows="4" id="supportComment" class="form-control" placeholder="Type your message here..."></input>
         </div>
         <div class="container col-sm-2">
           <button id="submitComment" class="btn btn-primary">Send</button>
@@ -43,6 +39,22 @@
       </div>
     </div>
     <div class="row col-sm-12">
+      <hr />
+    </div>
+    <div id="legendContent" class="row col-sm-12">
+        <ul id="legendItems" class="list-inline col-sm-12">
+          <li>
+            <span>Sentiment key:</span>
+          </li>
+          <% ['Joy', 'Sadness', 'Disgust', 'Fear', 'Anger'].forEach(function(sentiment) { %>
+          <li>
+            <img src="/imgs/<%= sentiment.toLowerCase() %>.png" height="30px">
+            <span><%= sentiment %></span>
+          </li>
+          <% }); %>
+        </ul>
+    </div>
+    <div class="row col-sm-12">
     <br />
     <br />
     </div>
@@ -50,12 +62,7 @@
   </div>
   <div class="container col-sm-3">
     <button id="textManager" class="btn btn-info container col-sm-12">TEXT MANAGER FOR HELP</button>
-<!--     <div class="container col-sm-12" id="help-btn">
-      <p>
-        TEXT MANAGER FOR HELP
-      </p>
-    </div>
- -->    <div class="container col-sm-12" id="overall-mood">
+    <div class="container col-sm-12" id="overall-mood">
       <header class="section-header">
         <h4 class="section-title center-title">Conversation Mood</h4>
       </header>
@@ -63,12 +70,6 @@
         <p>N/A</p>
       </div>
       <button id="appeaseCustomer" class="btn btn-info container col-sm-12 center-title">APPEASE CUSTOMER</button>
-<!--       <div class="container col-sm-12 center-title" id="appease-btn">
-        <p>
-          APPEASE CUSTOMER
-        </p>
-      </div>
- -->    
     </div>
 
     <div class="container col-sm-12" id="sponsors">
@@ -201,11 +202,11 @@
         if(tone.agreeable)
           agreeableCheck = true;
 
-        item = _.template($('#supportMessageTemplate').html())({ agreeable: agreeableCheck, message: tone.userName + ": " + JSON.stringify(tone.text) + "(" + tone.channel + ")"});
+        item = _.template($('#supportMessageTemplate').html())({ agreeable: agreeableCheck, message: tone.text});
 
       } 
       else {
-        item = _.template($('#requestMessageTemplate').html())({ sentiment: tone.sentiment, message: tone.userName + ": " + JSON.stringify(tone.text) + "(" + tone.channel + ")"});
+        item = _.template($('#requestMessageTemplate').html())({ sentiment: tone.sentiment, message: tone.text});
 
       }
 
@@ -214,34 +215,30 @@
 </script>
 
 <script type="text/template" id="requestMessageTemplate">
-    <div class="container col-sm-12 request">
+    <div class="container col-sm-12 message-item request ">
+     <div class="container col-sm-3">
+     </div>
+     <div class="container col-sm-6 message">
+         {{message}}
+     </div>
      <div class="container col-sm-3">
        <img src="/imgs/{{sentiment}}.png" height="30px">
-     </div>
-     <div class="container col-sm-6">
-       <p>
-         {{message}}
-       </p>
-     </div>
-     <div class="container col-sm-3">
      </div>
     </div>
 </script>
 
 
 <script type="text/template" id="supportMessageTemplate">
-    <div class="container col-sm-12 support">
-     <div class="container col-sm-3">
-     </div>
-     <div class="container col-sm-6">
-       <p>
-         {{message}}
-       </p>
-     </div>
-     <div class="container col-sm-3">
+    <div class="container col-sm-12 message-item support">
+     <div class="container col-sm-1">
       {% if (agreeable) { %}
         <img src="/imgs/check.png" height="30px" style='display'>
       {% }  %}
+     </div>
+     <div class="container col-sm-8 message">
+         {{message}}
+     </div>
+     <div class="container col-sm-3">
      </div>
     </div>
 </script>
