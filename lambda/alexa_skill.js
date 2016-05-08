@@ -113,6 +113,7 @@ function getSentiment(intentRequest, callback) {
         
         
         var toneData = JSON.parse(chunk);
+        toneData = toneData.result;
 
         //Find the emotion_tone section in the json response
         var emotionTone = toneData.document_tone.tone_categories.find(function(tone_category){ return tone_category.category_id === 'emotion_tone'; });
@@ -134,10 +135,20 @@ function getSentiment(intentRequest, callback) {
       res.on('end', () => {
         console.log('No more data in response.');
         
+        var replyMessage = null;
+        switch(toneName)
+        {
+            case "Anger" : replyMessage = "<speak>Why so angry? <audio src='https://s3.amazonaws.com/arrowiapp/cantdo.mp3' /></speak>";break;
+            case "Fear"  : replyMessage = "<speak>No need to fear.</speak>";break;
+            case "Disgust"  : replyMessage = "<speak>And you disgust me too.</speak>";break;
+            case "Joy"  : replyMessage = "<speak>That's great!</speak>";break;
+            case "Sadness"  : replyMessage = "<speak>I'm sorry.</speak>";break;
+        }
+        
         //We made it to the end - send a success response and expect the tone name to hav eben set in the data event before this
         callback(
             {},
-            buildSpeechletResponse("Ok", `Call Success - Result of ${toneName}`, "What's next", false)
+            buildSpeechletResponse("Ok", replyMessage, "What's next", false)
             );
         
       });
@@ -174,7 +185,7 @@ function getWelcomeResponse(callback) {
     // If we wanted to initialize the session to have some attributes we could add those here.
     var sessionAttributes = {};
     var cardTitle = "Welcome";
-    var speechOutput = "Welcome to SenSay!";
+    var speechOutput = "<speak>Welcome to SenSay!</speak>";
     // If the user either does not reply to the welcome message or says something that is not
     // understood, they will be prompted again with this text.
     var repromptText = "Please say something";
@@ -186,7 +197,7 @@ function getWelcomeResponse(callback) {
 
 function handleSessionEndRequest(callback) {
     var cardTitle = "Session Ended";
-    var speechOutput = "SenSay Thanks You!";
+    var speechOutput = "<speak>SenSay Thanks You!</speak>";
     // Setting this to true ends the session and exits the skill.
     var shouldEndSession = true;
 
@@ -258,8 +269,8 @@ function getColorFromSession(intent, session, callback) {
 function buildSpeechletResponse(title, output, repromptText, shouldEndSession) {
     return {
         outputSpeech: {
-            type: "PlainText",
-            text: output
+            type: "SSML",
+            ssml: output
         },
         card: {
             type: "Simple",
