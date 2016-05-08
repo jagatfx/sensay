@@ -109,12 +109,34 @@ color: #3fb34f;
 	margin-top: 10px;
 	background-color: #FFFFFF;
 	opacity: 70%;
-	height: 200px;
 	font-weight: 300;
+	text-align: center;
 }
 
-#sponsors img {
-	max-height: 200px;
+#sponsor-sensay {
+	padding: 5px;
+	text-align: center;
+}
+
+#powered-by p {
+	color: #006400;
+	font-size: 1.2em;
+}
+
+#created-by p {
+	margin-top: 5px;
+	color: #006400;
+	font-size: 1.2em;
+}
+
+#ibm-sponsor {
+	padding: 0;
+}
+
+#other-sponsors img {
+	padding: 0;
+	margin: 5px;
+	text-align: left;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
