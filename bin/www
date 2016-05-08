@@ -3,23 +3,39 @@
 /**
  * Module dependencies.
  */
+var express = require('express');
+var app     = express();
+var debug   = require('debug')('sensay:server');
+var http    = require('http');
 
-var app = require('../app');
-var debug = require('debug')('sensay:server');
-var http = require('http');
+var Tone    = require('../models/tone');
 
-/**
- * Get port from environment and store in Express.
- */
+var server = http.createServer(app);
+var io     = require('socket.io')(server);
 
+app = require('../app')(app, io);
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
-/**
- * Create HTTP server.
- */
-
-var server = http.createServer(app);
+io.on('connection', function(socket) {
+  console.log('a user connected');
+  var tonesToRet = 10;
+  Tone.find()
+  .sort({date: -1})
+  .limit(tonesToRet)
+  .exec(function(err, tones) {
+    if (err) {
+      console.error(err);
+    }
+    socket.emit('tones', tones);
+  });
+  // socket.on('chat message', function(msg) {
+  //   io.emit('chat message', msg);
+  // });
+  socket.on('disconnect', function() {
+    console.log('user disconnected');
+  });
+});
 
 /**
  * Listen on provided port, on all network interfaces.
