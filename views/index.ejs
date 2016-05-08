@@ -128,9 +128,11 @@
       //Fallback to neutral if nothing exists (means old data coming from db or cache)
       if(!tone.sentiment)
         tone.sentiment = "neutral";
+      else
+        tone.sentiment = tone.sentiment.toLower();
 
       if(tone.userName === "Support")
-        tone.userName = "You say"
+        tone.userName = "You say";
 
       var item = _.template($('#messageTemplate').html())({ sentiment: tone.sentiment, message: tone.userName + ": " + JSON.stringify(tone.text) + "(" + tone.channel + ")"});
       $('#current-convo').prepend(item);
