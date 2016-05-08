@@ -60,8 +60,10 @@ var theRouter = function(io) {
     return res.json({result: 'OK'});
   });
 
+  var TWILIO_CUSTOMER_NUMBER = process.env.TWILIO_CUSTOMER_NUMBER;
   router.post('/sms', function(req, res, next) {
-    twilioService.sendSms(null, req.body.text);
+    var to = TWILIO_CUSTOMER_NUMBER;
+    twilioService.sendSms(to, req.body.text);
     return res.json({result: 'OK'});
   });
 
@@ -81,6 +83,19 @@ var theRouter = function(io) {
         return res.json({result: 'OK'});
       }
     });
+  });
+
+  var TWILIO_MANAGER_NUMBER = process.env.TWILIO_MANAGER_NUMBER;
+  router.post('/sms-manager', function(req, res, next) {
+    var to = TWILIO_MANAGER_NUMBER;
+    twilioService.sendSms(to, req.body.text);
+    return res.json({result: 'OK'});
+  });
+
+  router.post('/sms-appease', function(req, res, next) {
+    var to = TWILIO_CUSTOMER_NUMBER;
+    twilioService.sendSms(to, req.body.text);
+    return res.json({result: 'OK'});
   });
 
   router.get('/empty', function(req, res, next) {
