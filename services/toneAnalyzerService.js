@@ -28,6 +28,11 @@ var toneAnalyzerService = function(io, userContext, text, callback, verifyOnly) 
 
       var sentiment = evaluateSentiment(data);
       var agreeable = evaluateAgreeable(data, sentiment);
+      updateConversationMood(userContext, data, function(err, conversationMood) {
+        if (conversationMood) {
+          io.sockets.emit('conversation-mood', conversationMood);
+        }
+      });
 
       if (err) {
         console.error(err);
@@ -42,7 +47,6 @@ var toneAnalyzerService = function(io, userContext, text, callback, verifyOnly) 
         sentiment: sentiment,
         agreeable: agreeable
       };
-
 
       //Only communicate out and store in DB if we are not in verification only mode
       if(!verifyOnly) {
@@ -122,6 +126,47 @@ function evaluateAgreeable(toneData, sentiment) {
       return true;
 
     return false;
+}
+
+// Use these to calculate the running average using weighted sum for each emotion tone.
+// TODO: improve efficiency and organization here / code duplication.
+var count = 0;
+var maxCount = 10;
+var runningAverages = {
+  anger: 0,
+  disgust: 0,
+  fear: 0,
+  joy: 0,
+  sadness: 0
+};
+function updateConversationMood(userContext, toneData, callback) {
+  if (userContext.userType === 'consumer' && userContext.channel === 'web') {
+    // for now we only care about these particular messages
+    var tones = toneData.document_tone.tone_categories.find(function(tone_category){ return tone_category.category_id === 'emotion_tone'; }).tones;
+    runningAverages.anger = (runningAverages.anger * count + tones.find(function(tone){ return tone.tone_id === 'anger'; }).score) / (count+1);
+    runningAverages.disgust = (runningAverages.disgust * count + tones.find(function(tone){ return tone.tone_id === 'disgust'; }).score)  / (count+1);
+    runningAverages.fear = (runningAverages.fear * count + tones.find(function(tone){ return tone.tone_id === 'fear'; }).score)  / (count+1);
+    runningAverages.joy = (runningAverages.joy * count + tones.find(function(tone){ return tone.tone_id === 'joy'; }).score)  / (count+1);
+    runningAverages.sadness = (runningAverages.sadness * count + tones.find(function(tone){ return tone.tone_id === 'sadness'; }).score)  / (count+1);
+    if (count < maxCount) {
+      count++;
+    }
+    var maxScore = Math.max.apply(Math, Object.keys( runningAverages ).map(function(key){return runningAverages[key];}));
+    var toneWithHighestScore = Object.keys( runningAverages ).find(function(key){ return runningAverages[key] == maxScore; });
+
+    // console.log('count:'+count);
+    // console.log(' runningAverages:'+
+    //   runningAverages.anger+','+
+    //   runningAverages.disgust+','+
+    //   runningAverages.fear+','+
+    //   runningAverages.joy+','+
+    //   runningAverages.sadness);
+    // console.log(' highest:'+toneWithHighestScore);
+
+    return callback(null, toneWithHighestScore);
+  } else {
+    return callback(null, null);
+  }
 }
 
 module.exports = toneAnalyzerService;

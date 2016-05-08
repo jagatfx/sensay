@@ -62,12 +62,15 @@
   </div>
   <div class="container col-sm-3">
     <button id="textManager" class="btn btn-info container col-sm-12">TEXT MANAGER FOR HELP</button>
+
     <div class="container col-sm-12" id="overall-mood">
       <header class="section-header">
         <h4 class="section-title center-title">Conversation Mood</h4>
       </header>
       <div class="container col-sm-12" id="overall-mood-img">
-        <p>N/A</p>
+        <div>
+          <img src="/imgs/neutral.png" height="85px">
+        </div>
       </div>
       <button id="appeaseCustomer" class="btn btn-info container col-sm-12 center-title">APPEASE CUSTOMER</button>
     </div>
@@ -185,6 +188,12 @@
     }
   });
 
+  socket.on('conversation-mood', function(sentiment) {
+    var item = _.template($('#conversationMoodTemplate').html())({ sentiment: sentiment});
+
+    $('#overall-mood-img div').replaceWith(item);
+  });
+
 
   function buildMessageItem(tone)
   {
@@ -252,4 +261,10 @@
           <img src="/imgs/check.png" height="30px" width="30px" style='display'>
         </li>
     {% }  %}
+</script>
+
+<script type="text/template" id="conversationMoodTemplate">
+    <div>
+       <img src="/imgs/{{sentiment}}.png" height="85px">
+    </div>
 </script>
