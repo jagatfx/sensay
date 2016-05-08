@@ -24,24 +24,29 @@
 
     </ul>
     <form>
-      <div class="container col-sm-12" id="replyBox">
+      <div id="replyBox">
         <div class="container col-sm-10">
-          <textarea autofocus rows="4" id="supportComment" placeholder="Enter Message Here..."></textarea>
+          <input type="text" autofocus rows="4" id="supportComment" class="form-control" placeholder="Enter Message Here..."></input>
         </div>
         <div class="container col-sm-2">
-          <button id="submitComment">Send</button>
+          <button id="submitComment" class="btn btn-primary">Send</button>
         </div>
       </div>
     </form>
-    <div class="row col-sm-12">
+    <div id="verifyCommentContent" class="row col-sm-12">
       <div class="col-sm-1">
-        <button id="verifyComment">Verify Sentiment</button>
+        <button id="verifyComment" class="btn btn-info">Verify Sentiment</button>
       </div>
       <div class="col-sm-9">
         <ul id="sentimentResults" class="list-inline">
         </ul>
       </div>
     </div>
+    <div class="row col-sm-12">
+    <br />
+    <br />
+    </div>
+
   </div>
   <div class="container col-sm-3">
     <div class="container col-sm-12" id="help-btn">
@@ -239,11 +244,11 @@
 </script>
 
 <script type="text/template" id="messageVerifyResultTemplate">
-    <li class="list-group-item">
+    <li>
        <img src="/imgs/{{sentiment}}.png" height="30px">
     </li>   
     {% if (agreeable) { %}
-        <li class="list-group-item">
+        <li>
           <img src="/imgs/check.png" height="30px" width="30px" style='display'>
         </li>
     {% }  %}

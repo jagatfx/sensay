@@ -48,9 +48,11 @@ color: #3fb34f;
 	width: 100%;
 }
 
+
 #submitComment {
-	padding: 25px;
+	/*padding: 0px 10px 0px 10px;*/
 	background-color: #3fb34f;
+	color: white;
 	border: none;
 }
 
@@ -147,3 +149,13 @@ body { font: 13px Helvetica, Arial; }
 #messages { list-style-type: none; margin: 0; padding: 0; }
 #messages li { padding: 5px 10px; }
 #messages li:nth-child(odd) { background: #eee; }
+
+#verifyCommentContent {
+	/*padding-top: 2px;*/
+	/*padding-left: 30px;*/
+}
+
+#sentimentResults {
+	padding-left: 45px;
+	margin: 0px;
+}
