@@ -18,6 +18,7 @@ var toneAnalyzerService = function(io, userContext, text, callback) {
 
       toneAnalyzer.tone({ text: text}, function(err, data) {
 
+        var sentiment = evaluateSentiment(data);
 
         if (err) {
           return callback(err);
@@ -29,7 +30,8 @@ var toneAnalyzerService = function(io, userContext, text, callback) {
             userName: userContext.userName,
             userType: userContext.userType,
             channel: userContext.channel,
-            result: data
+            result: data,
+            sentiment: sentiment
           };
           if (io.sockets) {
             io.sockets.emit('tone', ret);
@@ -41,7 +43,8 @@ var toneAnalyzerService = function(io, userContext, text, callback) {
             userName: userContext.userName,
             userType: userContext.userType,
             channel: userContext.channel,
-            result: data
+            result: data,
+            sentiment: sentiment
           }).save( function( err, tone, count ) {
             if (err) {
               console.error(err);
@@ -57,5 +60,24 @@ var toneAnalyzerService = function(io, userContext, text, callback) {
     });
 
 };
+
+
+function evaluateSentiment(toneData) {
+      //Find the emotion_tone section in the json response
+    var emotionTone = toneData.document_tone.tone_categories.find(function(tone_category){ return tone_category.category_id === 'emotion_tone'; });
+
+    //Find the max emotion tone score
+    var maxScore = Math.max.apply(Math,emotionTone.tones.map(function(tone){return tone.score;}));
+
+    //Using the max score, find the tone object with that score
+    var toneWithHighestScore = emotionTone.tones.find(function(tone){ return tone.score == maxScore; });
+
+    console.log(toneWithHighestScore.tone_name);
+    
+    //Find out the tone name
+    toneName = toneWithHighestScore.tone_name;
+
+    return toneName;
+}
 
 module.exports = toneAnalyzerService;

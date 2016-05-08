@@ -8,7 +8,7 @@ router.get('/', function(req, res, next) {
 
 /* GET consumer page for testing consumer support ticket messages */
 router.get('/consumer', function(req, res, next) {
-  res.render('consumer', { });
+  res.render('consumer', {});
 });
 
 module.exports = router;

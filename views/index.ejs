@@ -25,14 +25,16 @@
     <ul class="container col-sm-12" id="current-convo">
 
     </ul>
-    <div class="container col-sm-12">
-      <div class="container col-sm-10">
-        <textarea rows="3"></textarea>
+    <form action="">
+      <div class="container col-sm-12">
+        <div class="container col-sm-10">
+          <input id="supportComment" type="text" />
+        </div>
+        <div class="container col-sm-2">
+          <button id="submitComment">Send</button>
+        </div>
       </div>
-      <div class="container col-sm-2">
-        <input type="submit" value="Send">
-      </div>
-    </div>
+    </form>
   </div>
   <div class="container col-sm-3">
     <div class="container col-sm-12" id="help-btn">
@@ -63,8 +65,33 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+
 <script>
   var socket = io();
+
+  _.templateSettings = {
+      interpolate : /\{\{(.+?)\}\}/g
+  };
+
+  $('form').submit(function() {
+    let supportComment = $('#supportComment').val();
+
+    socket.emit('supportResponse', {
+
+      userContext: {
+        userName: "Support",
+        channel: "web",
+        userType: "support"
+      },
+
+      text: supportComment
+    });
+    $('#supportComment').val('');
+    //$('#current-convo').append($('<li>').text(`You say: ${supportRequestMessage}`));
+    return false;
+
+  });
   // $('form').submit(function(){
   //   socket.emit('chat message', $('#m').val());
   //   $('#m').val('');
@@ -76,15 +103,53 @@
   // });
   socket.on('tone', function(data) {
     console.log('tone received');
-    $('#current-convo').append($('<li>').text(data.userName + ":" + JSON.stringify(data.text) + "(" + data.channel + ")"));
+
+      //Fallback to neutral if nothing exists (means old data coming from db or cache, or just bad data missing sentiment)
+      if(!data.sentiment)
+        data.sentiment = "neutral";
+
+      if(data.userName === "Support")
+        data.userName = "You say"
+
+    var item = _.template($('#messageTemplate').html())({ sentiment: data.sentiment, message: data.userName + ": " + JSON.stringify(data.text) + "(" + data.channel + ")"});
+
+
+  $('#current-convo').append(item);
+    // $('#current-convo').append($('<li>').text(data.userName + ":" + JSON.stringify(data.text) + "(" + data.channel + ")"));
+    //$('#current-convo').append($('<li>').text(data.userName + ":" + JSON.stringify(data.text) + "(" + data.channel + ")"));
     // $('#messages').append($('<li>').text(JSON.stringify(data.result)));
   });
+
   socket.on('tones', function(tones) {
     console.log('tones received');
     for(var i=0; i < tones.length; i++) {
       var tone = tones[i];
-      $('#current-convo').prepend($('<li>').text(tone.userName + ":" + JSON.stringify(tone.text)));
+
+      //Fallback to neutral if nothing exists (means old data coming from db or cache)
+      if(!tone.sentiment)
+        tone.sentiment = "neutral";
+
+      if(tone.userName === "Support")
+        tone.userName = "You say"
+
+      var item = _.template($('#messageTemplate').html())({ sentiment: tone.sentiment, message: tone.userName + ": " + JSON.stringify(tone.text) + "(" + tone.channel + ")"});
+      $('#current-convo').prepend(item);
+      //$('#current-convo').prepend($('<li>').text(tone.userName + ":" + JSON.stringify(tone.text)));
       // $('#messages').append($('<li>').text(JSON.stringify(tone.result)));
     }
   });
+
+</script>
+
+<script type="text/template" id="messageTemplate">
+    <div class="container col-sm-12">
+     <div class="container col-sm-3">
+       <img src="/imgs/{{sentiment}}.png" height="40px">
+     </div>
+     <div class="container col-sm-9">
+       <p>
+         {{message}}
+       </p>
+     </div>
+    </div>
 </script>
