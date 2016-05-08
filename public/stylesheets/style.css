@@ -175,5 +175,6 @@ body { font: 13px Helvetica, Arial; }
 	margin-bottom: 10px;
 	font-family: 'Source Sans Pro', sans-serif;
 	color: #ffffff;
-	font-size: 1.5em;
+	font-size: 1.4em;
+	min-width: 215px;
 }

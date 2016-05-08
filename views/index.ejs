@@ -164,8 +164,32 @@
       dataType: "json",
       contentType: "application/json"
     });
+  });
 
+  $('#textManager').click(function() {
+    $.ajax({
+      type: "POST",
+      url: "/api/sms-manager",
+      data: JSON.stringify({ text: "An employee needs your help with a customer." }),
+      success: function(data) {
+        console.log(data);
+      },
+      dataType: "json",
+      contentType: "application/json"
+    });
+  });
 
+  $('#appeaseCustomer').click(function() {
+    $.ajax({
+      type: "POST",
+      url: "/api/sms-appease",
+      data: JSON.stringify({ text: "We value you as a customer. Please accept this Amazon gift card for $100." }),
+      success: function(data) {
+        console.log(data);
+      },
+      dataType: "json",
+      contentType: "application/json"
+    });
   });
 
   socket.on('tone', function(data) {
