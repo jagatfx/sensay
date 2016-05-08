@@ -22,7 +22,10 @@ var theRouter = function(io) {
 
   router.get('/tone', function(req, res, next) {
     var tonesToRet = 10;
-    Tone.find().limit(tonesToRet).exec(function(err, tones) {
+    Tone.find({})
+    .sort({date: -1})
+    .limit(tonesToRet)
+    .exec(function(err, tones) {
       if (err) {
         console.error(err);
         return res.json( {result: 'Error: getting tones'} );
