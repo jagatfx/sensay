@@ -60,7 +60,7 @@ color: #3fb34f;
 	margin-bottom: 15px;
 }
 
-#help-btn {
+/*#help-btn {
 	background-color: #3fb34f;
 	text-align: center;
 	min-height: 60px;
@@ -69,13 +69,13 @@ color: #3fb34f;
 	color: #ffffff;
 	font-size: 10px;
 }
-
-#help-btn p {
+*/
+/*#help-btn p {
 	padding-top: 20px;
 	width: 100%;
 	font-size: 1.5em;
 }
-
+*/
 #overall-mood {
 	background-color: #FFFFFF;
 	opacity: 70%;
@@ -83,7 +83,7 @@ color: #3fb34f;
 }
 
 #overall-mood-img {
-	min-height: 100px;
+	min-height: 80px;
 	margin-bottom: 10px;
 	text-align: center;
 	font-size: 2em;
@@ -93,7 +93,7 @@ color: #3fb34f;
 	margin: 30px;
 }
 
-#appease-btn {
+/*#appease-btn {
 	margin-bottom: 10px;
 	background-color: white;
 	border-style: solid;
@@ -106,7 +106,7 @@ color: #3fb34f;
 	margin-top: 10px;
 	margin-bottom: 10px;
 }
-
+*/
 #sponsors {
 	margin-top: 10px;
 	background-color: #FFFFFF;
@@ -158,4 +158,22 @@ body { font: 13px Helvetica, Arial; }
 #sentimentResults {
 	padding-left: 45px;
 	margin: 0px;
+}
+
+#appeaseCustomer {
+	margin-bottom: 10px;
+	background-color: white;
+	border-style: solid;
+	border-color: #3fb43f;
+	color: #3fb43f;
+}
+
+#textManager {
+	background-color: #3fb34f;
+	text-align: center;
+	min-height: 60px;
+	margin-bottom: 10px;
+	font-family: 'Source Sans Pro', sans-serif;
+	color: #ffffff;
+	font-size: 1.5em;
 }
