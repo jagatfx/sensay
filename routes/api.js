@@ -20,6 +20,17 @@ var theRouter = function(io) {
     return res.json({result: "OK"});
   });
 
+  router.get('/tone', function(req, res, next) {
+    var tonesToRet = 10;
+    Tone.find().limit(tonesToRet).exec(function(err, tones) {
+      if (err) {
+        console.error(err);
+        return res.json( {result: 'Error: getting tones'} );
+      }
+      return res.json(tones);
+    });
+  });
+
   router.post('/tone', function(req, res, next) {
     toneAnalyzer.tone(req.body, function(err, data) {
       if (err) {
