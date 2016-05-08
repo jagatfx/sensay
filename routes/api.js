@@ -3,6 +3,7 @@ var router  = express.Router();
 var Tone    = require('../models/tone');
 var toneAnalyzerService = require('../services/toneAnalyzerService');
 var personalityAnalyzerService = require('../services/personalityAnalyzerService');
+var twilio  = require('twilio');
 var twilioService = require('../services/twilioService');
 
 var theRouter = function(io) {
@@ -101,7 +102,11 @@ var theRouter = function(io) {
         return res.json( {result: 'Error: sms error calling toneAnalyzerService()'} );
       }
       else {
-        return res.json({result: 'OK'});
+        var twiml = new twilio.TwimlResponse();
+        twiml.say('Success');
+
+        res.writeHead(200, {'Content-Type': 'text/xml'});
+        res.end(twiml.toString());
       }
     });
   });
