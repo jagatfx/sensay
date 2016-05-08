@@ -135,18 +135,18 @@
   $('form').submit(function() {
     let supportComment = $('#supportComment').val();
 
-    $('#sentimentResults').html('');
+    // $('#sentimentResults').html('');
 
-    socket.emit('supportResponse', {
+    // socket.emit('supportResponse', {
 
-      userContext: {
-        userName: "Support",
-        channel: "web",
-        userType: "support"
-      },
+    //   userContext: {
+    //     userName: "Support",
+    //     channel: "web",
+    //     userType: "support"
+    //   },
 
-      text: supportComment
-    });
+    //   text: supportComment
+    // });
     $('#supportComment').val('');
     return false;
 
