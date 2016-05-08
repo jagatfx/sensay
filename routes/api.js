@@ -101,6 +101,7 @@ var theRouter = function(io) {
         return res.json( {result: 'Error: sms error calling toneAnalyzerService()'} );
       }
       else {
+        res.setHeader('Content-Type', 'application/json');
         return res.json({result: 'OK'});
       }
     });
