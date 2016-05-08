@@ -107,6 +107,8 @@
       //Fallback to neutral if nothing exists (means old data coming from db or cache, or just bad data missing sentiment)
       if(!data.sentiment)
         data.sentiment = "neutral";
+      else
+        data.sentiment = data.sentiment.toLowerCase();
 
       if(data.userName === "Support")
         data.userName = "You say"
@@ -129,7 +131,7 @@
       if(!tone.sentiment)
         tone.sentiment = "neutral";
       else
-        tone.sentiment = tone.sentiment.toLower();
+        tone.sentiment = tone.sentiment.toLowerCase();
 
       if(tone.userName === "Support")
         tone.userName = "You say";

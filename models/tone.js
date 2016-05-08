@@ -6,7 +6,8 @@ var Tone = new Schema({
   result: Schema.Types.Mixed,
   userName: String,
   userType: String,
-  channel: String
+  channel: String,
+  sentiment: String
 }, {
   timestamps: true
 });
