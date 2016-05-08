@@ -65,6 +65,11 @@ var theRouter = function(io) {
     return res.json({result: 'OK'});
   });
 
+  router.post('/smsreply', function(req, res, next) {
+    console.log('SMS reply received:'+JSON.stringify(req.body));
+    return res.json({result: 'OK'});
+  });
+
   router.get('/empty', function(req, res, next) {
     Tone.remove({}, function(err) {
       if (err) {
