@@ -67,7 +67,20 @@ var theRouter = function(io) {
 
   router.post('/smsreply', function(req, res, next) {
     console.log('SMS reply received:'+JSON.stringify(req.body));
-    return res.json({result: 'OK'});
+    var userContext = {
+        userName: req.body.From ? req.body.From : 'twilio',
+        channel: 'twilio',
+        userType: 'consumer'
+    };
+    toneAnalyzerService(io, userContext, req.body.Body, function(err, data){
+      if(err) {
+        console.error(err);
+        return res.json( {result: 'Error: sms error calling toneAnalyzerService()'} );
+      }
+      else {
+        return res.json({result: 'OK'});
+      }
+    });
   });
 
   router.get('/empty', function(req, res, next) {
