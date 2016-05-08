@@ -3,6 +3,7 @@ var router  = express.Router();
 var Tone    = require('../models/tone');
 var toneAnalyzerService = require('../services/toneAnalyzerService');
 var personalityAnalyzerService = require('../services/personalityAnalyzerService');
+var twilioService = require('../services/twilioService');
 
 var theRouter = function(io) {
 
@@ -52,6 +53,16 @@ var theRouter = function(io) {
       }
     });
 
+  });
+
+  router.get('/sms', function(req, res, next) {
+    twilioService.sendSms(null, 'This is a test of the broadcast system....beeeeeep.');
+    return res.json({result: 'OK'});
+  });
+
+  router.post('/sms', function(req, res, next) {
+    twilioService.sendSms(null, req.body.text);
+    return res.json({result: 'OK'});
   });
 
   router.get('/empty', function(req, res, next) {
